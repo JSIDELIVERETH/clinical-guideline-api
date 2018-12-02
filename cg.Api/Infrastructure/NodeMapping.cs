@@ -33,6 +33,12 @@ namespace cg.Api.Infrastructure
                     .WithMany()
                     .HasForeignKey(f => f.ParentNodeId);
             });
+
+            modelBuilder.Entity<NodeDescription>(e =>
+            {
+                e.ToTable("nodedescription", "cg");
+                e.HasKey(f => f.Id);
+            });
             return modelBuilder;
         }
     }

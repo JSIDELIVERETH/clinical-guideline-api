@@ -15,6 +15,7 @@ namespace cg.Api.Infrastructure
         public DbSet<Node> Nodes { get; set; }
         public DbSet<NodeType> NodeTypes { get; set; }
         public DbSet<NodeRelation> NodeRelations { get; set; }
+        public DbSet<NodeDescription> NodeDescriptions { get; set; }
 
 
         #endregion
