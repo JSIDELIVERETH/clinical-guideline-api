@@ -138,57 +138,7 @@ namespace cg.Api.Controllers
              
         }
 
-        [HttpPost("/NodeDescription")]
-        [ProducesResponseType(typeof(NodeDescription), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
-        public IActionResult PostDescription([FromBody]NodeDescription value)
-        {
-            try
-            {
-                if (value.Id == 0)
-                {
-                    BadRequest("Id cannot be 0(Zero)");
-                }
-                var nodeDescription = _cgDbContext.NodeDescriptions.FirstOrDefault(s => s.Id == value.Id);
-                if (nodeDescription == null)
-                {
-                    nodeDescription = new NodeDescription()
-                    {
-                        Id = value.Id,
-                    };
-                    _cgDbContext.NodeDescriptions.Add(nodeDescription);
-                }
-
-                nodeDescription.Title = value.Title;
-                nodeDescription.Description = value.Description;
-                nodeDescription.IsCondition = value.IsCondition;
-
-
-                _cgDbContext.SaveChanges();
-                return Ok(nodeDescription);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("An error has occured cannot save data");
-            }
-
-        }
-
-        [HttpGet("/NodeDescription/{nodeId}")]
-        [ProducesResponseType(typeof(NodeDto), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
-        public IActionResult GetNodeDescription(int nodeid)
-        {
-            try
-            {
-
-                return Ok(_cgDbContext.NodeDescriptions.FirstOrDefault(s => s.Id == nodeid));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("An error has occured cannot fetch data");
-            }
-        }
+       
 
         [HttpGet]
         [ProducesResponseType(typeof(IList<NodeDto>), (int)HttpStatusCode.OK)]
@@ -208,72 +158,6 @@ namespace cg.Api.Controllers
                 return BadRequest("An error has occured cannot fetch data");
             }
         }
-
-        #region Sync
-
-        [HttpGet("sync/pages")]
-        [ProducesResponseType(typeof(int[]), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
-        public IActionResult Getsyncpage()
-        {
-            try
-            {
-
-                return Ok(_cgDbContext.Nodes.Select(s => s.Page).Distinct().ToList());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("An error has occured cannot fetch data");
-            }
-        }
-         
-        [HttpGet("sync/nodes")]
-        [ProducesResponseType(typeof(IList<Node>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
-        public IActionResult GetsyncNodes(int page)
-        {
-            try
-            {
-
-                return Ok(_cgDbContext.Nodes.Include(i => i.NodeType).Where(s => s.Page == page));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("An error has occured cannot fetch data");
-            }
-        }
-
-        [HttpGet("/sync/NodeTypes")]
-        [ProducesResponseType(typeof(IList<NodeType>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
-        public IActionResult GetsyncNodeTypes()
-        {
-            try
-            {
-                return Ok(_cgDbContext.NodeTypes.ToList());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("An error has occured cannot fetch data");
-            }
-        }
-
-        [HttpGet("/sync/relation")]
-        [ProducesResponseType(typeof(IList<NodeRelation>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
-        public IActionResult Getsyncrelation(int page)
-        {
-            try
-            {
-
-                return Ok(_cgDbContext.NodeRelations.Where(p => p.ParentNode.Page == page).ToList());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("An error has occured cannot fetch data");
-            }
-        }
-        #endregion
 
     }
 }
