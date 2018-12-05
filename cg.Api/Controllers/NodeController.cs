@@ -138,7 +138,7 @@ namespace cg.Api.Controllers
              
         }
 
-        [HttpPost("/NodeDescription")]
+        [HttpPost("/api/NodeDescription")]
         [ProducesResponseType(typeof(NodeDescription), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         public IActionResult PostDescription([FromBody]NodeDescription value)
@@ -174,7 +174,7 @@ namespace cg.Api.Controllers
 
         }
 
-        [HttpGet("/NodeDescription/{nodeId}")]
+        [HttpGet("/api/NodeDescription/{nodeId}")]
         [ProducesResponseType(typeof(NodeDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         public IActionResult GetNodeDescription(int nodeid)
