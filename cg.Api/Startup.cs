@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace cg.Api
 {
@@ -114,6 +117,28 @@ namespace cg.Api
                 .UseEFSecondLevelCache()
                 .UseAuthentication()
                 .UseMvc();
+
+            app.UseStaticFiles(); // For the wwwroot folder
+
+            if (!Directory.Exists("assets/images"))
+            {
+                // Try to create the directory.
+                Directory.CreateDirectory("assets/images");
+            }
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), @"assets/images")),
+                RequestPath = new PathString("/MyImages")
+            });
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+            Path.Combine(Directory.GetCurrentDirectory(), @"assets/images")),
+                RequestPath = new PathString("/MyImages")
+            });
         }
     }
 }
