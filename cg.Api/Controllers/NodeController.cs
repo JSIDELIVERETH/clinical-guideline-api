@@ -64,8 +64,15 @@ namespace cg.Api.Controllers
         {
             try
             {
-                var parent = _cgDbContext.Nodes.FirstOrDefault(s => s.Id == nodeId);
-                return Ok(_mapper.Map<List<NodeDto>>(_cgDbContext.Nodes.Include(s=>s.NodeType).Where(s => s.Page == parent.Page && (!isActive.HasValue ||s.IsActive))));
+                var familyGuidance = _cgDbContext.Nodes.Include(n => n.NodeType).Where(s => s.Id == nodeId);
+                var titles = _cgDbContext.Nodes.Include(n => n.NodeType).Include(n => n.NodeRelation)
+                        .Where(n => n.NodeType.NodeTypeCode.Equals("TITLE") && n.NodeRelation.Any(nr => nr.ParentNodeId == nodeId));
+                var entries = _cgDbContext.Nodes.Include(n => n.NodeType).Include(n => n.NodeRelation)
+                        .Where(n => n.NodeType.NodeTypeCode.Equals("ENTRY") && n.NodeRelation.Any(nr => nr.ParentNode.NodeRelation.Any(pnr => pnr.ParentNodeId == nodeId)));
+                var procedures = _cgDbContext.Nodes.Include(n => n.NodeType).Include(n => n.NodeRelation)
+                        .Where(n => n.NodeType.NodeTypeCode.Equals("PRCDR") && n.NodeRelation.Any(nr => nr.ParentNode.NodeRelation.Any(pnr => pnr.ParentNode.NodeRelation.Any(gpnr => gpnr.ParentNodeId == nodeId))));
+                var relatedNodes = familyGuidance.Union(titles).Union(entries).Union(procedures).Where(n=>1==1);
+                return Ok(_mapper.Map<List<NodeDto>>(relatedNodes));
             }
             catch (Exception ex)
             {
